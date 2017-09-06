@@ -90,7 +90,8 @@ class LimerickDetector:
         
     def normalize(self, pronunciations):
         norm_pronunciations = []
-        for pronunciation in pronunciations:
+        for p in pronunciations:
+            pronunciation = list(p)
             while (not pronunciation[0][-1].isdigit()):
                 del pronunciation[0]
             norm_pronunciations.append(pronunciation)
@@ -101,7 +102,7 @@ class LimerickDetector:
         Returns True if two words (represented as lower-case strings) rhyme,
         False otherwise.
         """
-
+        
         # TODO: provide an implementation!
         pronunciations_a = self._pronunciations.get(a.lower())
         pronunciations_b = self._pronunciations.get(b.lower())
@@ -115,30 +116,57 @@ class LimerickDetector:
         norm_pronunciations_b = self.normalize(pronunciations_b)
         
         isRhyme = False
-        # For all possible combinations of pronunciations
+        # For all possible combinations of normalized pronunciations
         for norm_pronunciation_a in norm_pronunciations_a:
             for norm_pronunciation_b in norm_pronunciations_b:
+                # find shorter pronunciation
                 shorter_pronunciation = list(norm_pronunciation_a)
                 longer_pronunciation = list(norm_pronunciation_b)
                 if (len(norm_pronunciation_a) > len(norm_pronunciation_b)):
                     shorter_pronunciation = norm_pronunciation_b
                     longer_pronunciation = norm_pronunciation_a
+                # keep deleting matching sounds from backwards
                 while (shorter_pronunciation):
                     if (longer_pronunciation[-1] == shorter_pronunciation[-1]):
                         del longer_pronunciation[-1]
                         del shorter_pronunciation[-1]
                     else :
                         break
+                # if shorter pronunciation is empty, it is a suffix
+                # and words rhyme, otherwise not
                 if (not shorter_pronunciation):
                     isRhyme = True
                     break
             if (isRhyme):
                 break
-        
         return isRhyme
         
     def limerick_rhymes(self, last_words):
+        # last_words is the list of 5 words that end 5 lines in limerick
+        rhyme12 = self.rhymes(last_words[0], last_words[1])
+        rhyme25 = self.rhymes(last_words[1], last_words[4])
+        rhyme15 = self.rhymes(last_words[0], last_words[4])
+        rhyme34 = self.rhymes(last_words[2], last_words[3])
+        # Check if all As rhyme and all Bs rhyme, if not, return false
+        if (not (rhyme12 and rhyme25 and rhyme15 and rhyme34)):
+            return False
         
+        rhyme13 = self.rhymes(last_words[0], last_words[2])
+        rhyme23 = self.rhymes(last_words[1], last_words[2])
+        rhyme53 = self.rhymes(last_words[4], last_words[2])
+        # Check if any A rhymes with first B, if yes, return false
+        if (rhyme13 or rhyme23 or rhyme53):
+            return False
+        
+        rhyme14 = self.rhymes(last_words[0], last_words[3])
+        rhyme24 = self.rhymes(last_words[1], last_words[3])
+        rhyme54 = self.rhymes(last_words[4], last_words[3])
+        # Check if any A rhymes with second B, if yes, return false
+        if (rhyme14 or rhyme24 or rhyme54):
+            return False
+            
+        # If all above conditions are met, limerick rhyming is perfect, return true/false
+        return True
 
     def is_limerick(self, text):
         """
@@ -180,19 +208,23 @@ class LimerickDetector:
         # Remove words that only have punctuations #####
         for i in range(0, len(tokenized_sents)):
             tokenized_sents[i] = [word for word in tokenized_sents[i] if not all(char in punctuation for char in word)]
-            
+        
+        """
         ########
         print tokenized_sents
         print len(tokenized_sents)
         print "\n-------------------------\n"
         ########
+        """
         
+        # Check if AABBA rhyme scheme is followed
         last_words = []
         for i in range(0, len(tokenized_sents)):
             last_words.append(tokenized_sents[i][-1])
-        if (not limerick_rhymes(last_words)):
+        if (not self.limerick_rhymes(last_words)):
             return False
-            
+        
+        #### Check for syllables constraint here #######
         
         return False
 
