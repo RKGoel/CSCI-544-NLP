@@ -167,6 +167,54 @@ class LimerickDetector:
             
         # If all above conditions are met, limerick rhyming is perfect, return true/false
         return True
+        
+    def num_syllables_in_sent(self, sent):
+        count = 0
+        for word in sent:
+            count += self.num_syllables(word)
+        return count
+        
+    def limerick_syllables(self, sents):
+        """
+        Additionally, the following syllable constraints should be observed:
+          * No two A lines should differ in their number of syllables by more than two.
+          * The B lines should differ in their number of syllables by no more than two.
+          * Each of the B lines should have fewer syllables than each of the A lines.
+          * No line should have fewer than 4 syllables
+        """
+        # sents will have 5 sentences of limerick
+        sent_syllables = []
+        for sent in sents:
+            sent_syllables.append(self.num_syllables_in_sent(sent))
+        
+        # No line should have fewer than 4 syllables
+        for num in sent_syllables:
+            if num < 4:
+                return False
+                
+        num0 = sent_syllables[0]
+        num1 = sent_syllables[1]
+        num2 = sent_syllables[2]
+        num3 = sent_syllables[3]
+        num4 = sent_syllables[4]
+        
+        # Each of the B lines should have fewer syllables than each of the A lines.
+        if(num2 > num0 or num2 > num1 or num2 > num4 or \
+           num3 > num0 or num3 > num1 or num3 > num4):
+            return False
+        
+        # No two A lines should differ in their number of syllables by more than two.
+        if ( abs(num0 - num1) > 2 or \
+             abs(num0 - num4) > 2 or \
+             abs(num1 - num4) > 2 ):
+            return False
+        
+        # The B lines should differ in their number of syllables by no more than two.
+        if ( abs(num2 - num3) > 2 ):
+            return False
+        
+        # if all above conditions satisfy
+        return True
 
     def is_limerick(self, text):
         """
@@ -224,9 +272,11 @@ class LimerickDetector:
         if (not self.limerick_rhymes(last_words)):
             return False
         
-        #### Check for syllables constraint here #######
+        # Check for syllables constraints
+        if (not self.limerick_syllables(tokenized_sents)):
+            return False
         
-        return False
+        return True
 
 
 # The code below should not need to be modified
