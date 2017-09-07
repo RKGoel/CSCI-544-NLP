@@ -240,11 +240,6 @@ class LimerickDetector:
         # TODO: provide an implementation!
         sents = [sent for sent in text.splitlines()]
         
-        #######
-        #print sents
-        #print len(sents)
-        ########
-        
         tokenized_sents = [word_tokenize(sent) for sent in sents]
         tokenized_sents = [sent for sent in tokenized_sents if sent != []] # ignores blank lines
         
@@ -256,14 +251,6 @@ class LimerickDetector:
         # Remove words that only have punctuations #####
         for i in range(0, len(tokenized_sents)):
             tokenized_sents[i] = [word for word in tokenized_sents[i] if not all(char in punctuation for char in word)]
-        
-        """
-        ########
-        print tokenized_sents
-        print len(tokenized_sents)
-        print "\n-------------------------\n"
-        ########
-        """
         
         # Check if AABBA rhyme scheme is followed
         last_words = []
