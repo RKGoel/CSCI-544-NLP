@@ -220,6 +220,25 @@ class LimerickDetector:
         new_text = '%s' % text
         new_text.replace("'", "")
         return word_tokenize(new_text)
+        
+    def guess_syllables(self, word):
+        pronunciation = self._pronunciations.get(word.lower())
+        if (pronunciation != None):
+            return self.num_syllables(word)
+            
+        vowels = 'aeiou'
+        count = 0
+        if (word[0] in vowels):
+            count += 1
+        for i in range(1, len(word)):
+            if (word[i] in vowels and word[i-1] not in vowels):
+                count += 1
+        if (word[-1] == 'e'):
+            count -= 1
+        if (re.search('(.*)[^aeiou]les?$', word)):
+            count += 1
+            
+        return count
 
     def is_limerick(self, text):
         """
