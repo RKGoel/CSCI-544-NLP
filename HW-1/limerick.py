@@ -215,6 +215,11 @@ class LimerickDetector:
         
         # if all above conditions satisfy
         return True
+        
+    def apostrophe_tokenize(self, text):
+        new_text = '%s' % text
+        new_text.replace("'", "")
+        return word_tokenize(new_text)
 
     def is_limerick(self, text):
         """
