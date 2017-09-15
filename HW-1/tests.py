@@ -46,6 +46,8 @@ class TestSequenceFunctions(unittest.TestCase):
         except: s.append(18)
         try: self.assertEqual(self.ld.rhymes("can't", "pant"), True)
         except: s.append(19)
+        try: self.assertEqual(self.ld.rhymes("plane", "train"), True)
+        except: s.append(19)
 
         print '\nNumber of failed rhyme tests:', str(len(s))
         if len(s)!=0: print 'Failed rhyme tests:', ','.join([str(x) for x in s])
@@ -76,6 +78,8 @@ class TestSequenceFunctions(unittest.TestCase):
         except: s.append(11)
         try: self.assertEqual(self.ld.num_syllables("advertisement"), 4)
         except: s.append(12)
+        try: self.assertEqual(self.ld.guess_syllables("reluctantpeople"), 5)
+        except: s.append(13)
 
         print '\nNumber of failed syllables tests:', str(len(s))
         if len(s)!=0: print 'Failed syllables tests:', ','.join([str(x) for x in s])
@@ -127,6 +131,12 @@ And burned her entire
 Front page, sporting section and all."""
 
         h = "dog\ndog\ndog\ndog\ndog"
+        
+        i = """We learn languages naturally but computer is so dumb
+Teaching it rules of any language makes my heart go numb
+But with our captain as Jon May
+One thing that I can surely say
+Making computer fluent won't be that bothersome"""
 
         s = []
 
@@ -146,6 +156,8 @@ Front page, sporting section and all."""
         except: s.append('g')
         try: self.assertEqual(self.ld.is_limerick(h), False)
         except: s.append('h')
+        try: self.assertEqual(self.ld.is_limerick(i), True)
+        except: s.append('i')
 
         print 'Number of failed limerick tests:', str(len(s))
         if len(s)!=0: print 'Failed limerick tests:', ','.join(s)
