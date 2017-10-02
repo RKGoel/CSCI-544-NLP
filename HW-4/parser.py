@@ -88,6 +88,7 @@ if __name__ == '__main__':
     CFG, terminals = read_cfg()
     CFG_dict = build(CFG)
     datafile = "dev.strings"
+    #datafile = "test.txt"
     sentnum = 1
     for line in fileinput.input(datafile):
         line = line.split("\n")[0]
@@ -97,11 +98,12 @@ if __name__ == '__main__':
         origin_W = list(W)
         print W
         #W = ['time', 'flies', 'like', 'an', 'arrow']
+        #print terminals
         for i in range(len(W)):
+            W[i] = W[i].lower()
             if W[i] not in terminals:
                 W[i] = "<unk>"
-            else:
-                W[i] = W[i].lower()
+        #print W
         T = pcky(CFG_dict, W)
         #show_cell(T, 0, len(W))
         max_rule = select_max_rule(T, 0, len(W))
@@ -149,16 +151,17 @@ if __name__ == '__main__':
     file_obj.close()
 
 ## First string output:
-# (TOP (S (NP (JJ The) (NN flight)) (VP (MD should) (VP (VB be) (NP (CD eleven) (RB a.m) (NN tomorrow))))) (PUNC .))
-## log-probability of first string base 10 = -17.5429653889
+# (TOP (S (NP (DT The) (NN flight)) (VP (MD should) (VP (VB be) (NP (CD eleven) (RB a.m) (NN tomorrow))))) (PUNC .))
+## log-probability of first string base 10 = -16.2231146715
 
 ## Output from evalb.py script on initial parser (PCKY without modifications)
-# dev.parses.post 437 brackets
+# dev.parses.post 440 brackets
 # dev.trees       474 brackets
-# matching        340 brackets
-# precision       0.778032036613
-# recall  0.717299578059
-# F1      0.746432491767
+# matching        405 brackets
+# precision       0.920454545455
+# recall  0.854430379747
+# F1      0.886214442013
+
 
 
 
